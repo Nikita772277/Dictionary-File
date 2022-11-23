@@ -30,7 +30,7 @@ void UseMenu()
         else if (chec == 2)
         {
             dictionary.GetDictionary();
-
+            continue;
         }
         else if (chec == 3)
         {
