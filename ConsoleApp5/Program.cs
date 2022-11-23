@@ -7,15 +7,14 @@ void Menu()
     Console.WriteLine($"1) Добавить слово и его перевод");
     Console.WriteLine($"2) Получить все данные словаря");
     Console.WriteLine($"3) Проверка наличия перевода слова");
-    Console.WriteLine($"4) Удалить слово и его переводы");
+    Console.WriteLine($"4) Удалить слово и его перевод(ы)");
     Console.WriteLine($"5) Заменить перевод конкретного слова");
     Console.WriteLine($"6) Удалить конкретный перевод");
     Console.WriteLine();
 }
 void UseMenu()
 {
-    dictionary.CreateDictionary();
-    dictionary.EntryInitialDictionary();
+    dictionary.SetWay();
     dictionary.InitialFunction();
     while (true)
     {
@@ -28,10 +27,10 @@ void UseMenu()
             dictionary.Add();
             continue;
         }
-        if (chec == 2)
+        else if (chec == 2)
         {
             dictionary.GetDictionary();
-            continue;
+
         }
         else if (chec == 3)
         {
@@ -45,7 +44,7 @@ void UseMenu()
         }
         else if (chec == 5)
         {
-            dictionary.Key();
+            dictionary.Replacement();
             continue;
         }
         else if (chec == 6)

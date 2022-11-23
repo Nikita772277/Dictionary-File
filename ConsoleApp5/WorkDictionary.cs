@@ -10,75 +10,78 @@ namespace ConsoleApp5
     using System;
     using System.Xml.Linq;
     using System.IO;
+    using System.Transactions;
 
     internal class WorkDictionary
     {
-        private List<string> _translation1 = new List<string>() { "Pineapple", "fgas" };
-        private Dictionary<string, List<string>> _valuePairs = new();
         private string _way;
-        public void CreateDictionary()
+        public void SetWay()
         {
-            Console.WriteLine($"Введите путь по которому хотите создать файл");
-            _way = Console.ReadLine();
-            //_way= @"C:\Users\Nikita77227\Desktop\2\D.txt";
-            FileInfo finfo = new FileInfo(_way);
-            if (!finfo.Exists)
+            bool checkWay = false;
+            while (true)
             {
-                using (finfo.Create()) ;
-            }
-            _valuePairs = new Dictionary<string, List<string>>()
-            {
-                ["Ананас"] = _translation1,
-                ["Переводчик"] = new List<string>() { "Translator" },
-                ["Зависимость"] = new List<string>() { "Dependence" },
-            };
-        }
-        public async void EntryInitialDictionary()
-        {
-            using (StreamWriter writer = new StreamWriter(_way, true))
-                foreach (var key in _valuePairs.Keys)
+                if (checkWay == false)
                 {
-                    int i = 1;
-                    await writer.WriteAsync($"{key} - ");
-                    foreach (var pair in _valuePairs[key])
+                    Console.WriteLine($"Введите путь по которому хотите создать файл");
+                    _way = $@"{Console.ReadLine()}\Dictionery.txt";
+                    FileInfo finfo = new FileInfo(_way);
+                    if (!finfo.Exists)
                     {
-                        writer.Write($"{pair}");
-                        if (i == _valuePairs[key].Count)
+                        try
                         {
-                            writer.Write($".");
+                            using (finfo.Create()) ;
+                            checkWay = true;
+                            break;
                         }
-                        else if (i > 0)
+                        catch
                         {
-                            writer.Write($", ");
+                            Console.WriteLine($"Не удалось создать файл по указанному адресу");
+                            Console.WriteLine();
                         }
-                        i++;
                     }
-                    writer.WriteLine();
+                    else
+                    {
+                        checkWay = true;
+                        break;
+                    }
                 }
+            }
         }
         public void InitialFunction()
         {
+            bool checkw = false;
             Console.WriteLine($"Введите слово");
             string word = Console.ReadLine();
-            bool check = _valuePairs.ContainsKey(word);
-            if (check == true)
+            IsTheTextEntered(word, "плово");
+            using (StreamReader reader = new(_way))
             {
-                Console.WriteLine($"Слово есть в словаре");
+                string? line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    var split = line.Split('-', ',', ' ');
+                    if (split[0] == word)
+                    {
+                        Console.WriteLine($"Слово есть в словаре");
+                        checkw = true;
+                        break;
+                    }
+                }
             }
-            else if (check == false)
+            if (checkw != true)
             {
                 Console.WriteLine($"Такого слова нет введите перевод");
                 string translation = Console.ReadLine();
+                IsTheTextEntered(translation, "перевод");
                 while (true)
                 {
                     Console.WriteLine($"Хотите ли вы записать в словарь это слово и его перевод (введите да или нет)");
-
                     string enter = Console.ReadLine();
                     if (enter == "да" || enter == "Да")
                     {
                         using (StreamWriter writer = new StreamWriter(_way, true))
-                            writer.WriteAsync($"{word} - {translation}.");
-                        _valuePairs.Add(translation, new List<string>() { word });
+                            writer.WriteLineAsync($"{word} - {translation} .");
+                        Console.WriteLine($"Запись произошла успешно");
+                        Console.WriteLine();
                         break;
                     }
                     else if (enter == "нет" || enter == "Нет")
@@ -89,177 +92,201 @@ namespace ConsoleApp5
                     else
                     {
                         Console.WriteLine($"Вы ввели некоректый ответ");
+                        Console.WriteLine();
                     }
                 }
             }
         }
         public void Add()
         {
-            string word = "";
-            string translation = "";
-            while (true)
+            string word;
+            string translation;
+            Console.WriteLine($"Введите слово которое хотите добавть");
+            word = Console.ReadLine();
+            IsTheTextEntered(word, "слово");
+            Console.WriteLine($"Введите превод которое хотите добавть");
+            translation = Console.ReadLine();
+            IsTheTextEntered(translation, "перевод");
+            using (StreamWriter writer = new(_way, true))
             {
-                Console.WriteLine($"Введите слово которое хотите добавть");
-                word = Console.ReadLine();
-                if (word == "" || word == " ")
-                {
-                    Console.WriteLine($"Строку нельзя оставить пустой");
-                }
-                else { break; }
+                writer.WriteLineAsync($"{word} - {translation} .");
             }
-            while (true)
-            {
-                Console.WriteLine($"Введите превод которое хотите добавть");
-                translation = Console.ReadLine();
-                if (translation == "" || translation == " ")
-                {
-                    Console.WriteLine($"Строку нельзя оставить пустой");
-                }
-                else { break; }
-            }
-            using (StreamWriter writer = new StreamWriter(_way, true))
-                writer.WriteAsync($"{word} - {translation}.");
-            _valuePairs.Add(word, new List<string>() { translation });
         }
-        public void GetDictionary()
+        public async void GetDictionary()
         {
-            foreach (var pair in _valuePairs)
+            using (StreamReader reader = new StreamReader(_way))
             {
-                int count = 1;
-                Console.Write($"Слово - {pair.Key} перевод(ы): ");
-                foreach (var i in pair.Value)
+                string text = await reader.ReadToEndAsync();
+                Console.WriteLine(text);
+            }
+        }
+        public async void CheckValue()
+        {
+            Console.WriteLine($"Введите перевод который хотите проверить");
+            string value = Console.ReadLine();
+            bool Tverification = false;
+            using (StreamReader reader = new(_way))
+            {
+                string? line;
+                while ((line = await reader.ReadLineAsync()) != null)
                 {
-                    Console.Write($"{i}");
-                    if (count == pair.Value.Count)
+                    var split = line.Split(',', '-', ' ');
+                    for (int i = 1; i < split.Length; i++)
                     {
-                        Console.Write($".");
+                        if (split[i] == value)
+                        {
+                            Console.WriteLine($"Перевод есть в словаре");
+                            Tverification = true;
+                            break;
+                        }
                     }
-                    else if (count > 0) { Console.Write($", "); }
-                    count++;
                 }
-                Console.WriteLine();
+                if (Tverification == false)
+                {
+                    Console.WriteLine($"Такого перевода нет");
+                }
             }
         }
-        public void CheckValue()
-        {
-            Console.WriteLine($"Введите слово перевод которого хотите проверить");
-            string checkkey = Console.ReadLine();
-            bool verifiedkey = _valuePairs.ContainsKey(checkkey);
-            if (verifiedkey == true)
-            {
-                _valuePairs.TryGetValue(checkkey, out var foundelement);
-                Console.WriteLine($"Введите перевод который хотите проверить");
-                string value = Console.ReadLine();
-                var verifiedvalue = foundelement.Contains(value);
-                //bool verifiedvalue = valuePairs.ContainsValue(value);
-                if (verifiedvalue == true)
-                {
-                    Console.WriteLine($"Такой перевод есть в словаре");
-                }
-                else
-                {
-                    Console.WriteLine($"Такого перевода нет в словаре");
-                }
-            }
-            else
-            {
-                Console.WriteLine($"Такого слова нет");
-            }
-        }
-        public void Remove()
+        public async void Remove()
         {
             Console.WriteLine($"Введите слово которое хотите удалить");
             string enter = Console.ReadLine();
-            bool verifiedvalue = _valuePairs.ContainsKey(enter);
-            if (verifiedvalue == true)
+            File.WriteAllLines(_way, File.ReadAllLines(_way).Where(v => v.Trim().IndexOf(enter) == -1).ToArray());
+        }
+        public async void Replacement()
+        {
+            string onwhich = "";
+            bool Kcheck = false;
+            Console.WriteLine($"Слово перевод которого хотите изменить");
+            string key = Console.ReadLine();
+            Console.WriteLine($"Какой перевод вы хотите заменить");
+            string which = Console.ReadLine();
+            while (true)
             {
-                File.WriteAllLines(_way, File.ReadAllLines(_way).Where(v => v.Trim().IndexOf(enter) == -1));
-                bool checkremove = _valuePairs.Remove(enter);
-                if (checkremove == true)
+                Console.WriteLine($"На какой перевод вы хотите заменть");
+                onwhich = Console.ReadLine();
+                IsTheTextEntered(onwhich, "перевод на который вы хотите заменить");
+            }
+            string str = string.Empty;
+            string read = "";
+            using (StreamReader reader = new(_way))
+            {
+
+                string? line;
+                while ((line = await reader.ReadLineAsync()) != null)
                 {
-                    Console.WriteLine($"слово и перевод удалены");
-                }
-                else
-                {
-                    Console.WriteLine($"Не удалось удалить слово");
+                    var split = line.Split('-', ',', ' ');
+                    if (split[0] == key)
+                    {
+                        read = line;
+                        str = line;
+                        Kcheck = true;
+                        break;
+                    }
                 }
             }
-            else
+            if (Kcheck == true)
             {
-                Console.WriteLine($"Нет такого слова");
+                try
+                {
+                    str = str.Replace(which, onwhich);
+                }
+                catch
+                {
+                    Console.WriteLine($"Вы нечего не ввели");
+                    Console.WriteLine();
+                }
+                string[] readText = File.ReadAllLines(_way);
+                for (int i = 0; i < readText.Length; i++)
+                {
+                    if (readText[i] == read)
+                    {
+                        readText[i] = str;
+                        Console.WriteLine($"Перевод успешно заменён");
+                        break;
+                    }
+                }
+                File.WriteAllLines(_way, readText);
             }
         }
-        public void Key()
+        public async void DeleteATranslation()
         {
-            Console.WriteLine($"Введите слово перевод которого вы хотите заменить");
-            string enter = Console.ReadLine();
-            _valuePairs.TryGetValue(enter, out var foundelement);
-            bool verifiedvalue = _valuePairs.ContainsKey(enter);
-            if (verifiedvalue == true)
-            {
-                Console.WriteLine($"Какой перевод вы хотите заменить");
-                string which = Console.ReadLine();
-                bool checkvalue = foundelement.Contains(which);
-                if (checkvalue == true)
-                {
-                    Console.WriteLine($"На какой перевод вы хотите заменть");
-                    string onwhich = Console.ReadLine();
-                    string text = File.ReadAllText(_way);
-                    text = text.Replace(which, onwhich);
-                    File.WriteAllText(_way, text);
-                    foundelement.Remove(which);
-                    foundelement.Add(onwhich);
-                    Console.WriteLine($"Перевод изменён");
-                }
-                else
-                {
-                    Console.WriteLine($"Нет такого перевода");
-                }
-            }
-            else
-            {
-                Console.WriteLine($"Нет такого слова");
-            }
-        }
-        public void DeleteATranslation()
-        {
+
+            string read = "";
+            string str = "";
+            bool Tcheck = false;
+            bool numbert = false;
             Console.WriteLine($"Введите слово перевод которого вы хотите удалить");
             string enter = Console.ReadLine();
-            _valuePairs.TryGetValue(enter, out var foundelement);
-            bool verifiedvalue = _valuePairs.ContainsKey(enter);
-            if (verifiedvalue == true)
+            Console.WriteLine($"Введите перевод который хотите удалить");
+            string word = Console.ReadLine();
+            using (StreamReader reader = new(_way))
             {
-                Console.WriteLine($"Введите перевод который хотите удалить");
-                string word = Console.ReadLine();
-                bool checkvalue = foundelement.Contains(word);
-                if (checkvalue == true)
+                string? line;
+                while ((line = await reader.ReadLineAsync()) != null)
                 {
-                    if (foundelement.Count > 1)
+                    var split = line.Split('-', ',', ' ', '.');
+                    if (split[0] == enter)
                     {
-                        string text = File.ReadAllText(_way);
-                        text = text.Replace(word, "");
-                        File.WriteAllText(_way, text);
-                        bool a = foundelement.Remove(word);
-                        if (a == true)
+                        int notempty = 0;
+                        for (int i = 0; i < split.Length; i++)
                         {
-                            Console.WriteLine($"Превод удалён");
+                            if (split[i] != "")
+                            {
+                                notempty++;
+                            }
+                        }
+                        if (notempty > 2)
+                        {
+                            read = line;
+                            str = line;
+                            Tcheck = true;
+                            break;
                         }
                         else
                         {
-                            Console.WriteLine($"Перевод не удалён");
+                            Console.WriteLine("Перевод всего один удаление невозможно");
+                            numbert = true;
+                            break;
                         }
                     }
-                    else
+                }
+            }
+            if (Tcheck == true)
+            {
+                str = str.Replace(word, "");
+                string[] readText = File.ReadAllLines(_way);
+                for (int i = 0; i < readText.Length; i++)
+                {
+                    if (readText[i] == read)
                     {
-                        Console.WriteLine("Перевод всего один удаление невозможно");
+                        readText[i] = str;
+                        Console.WriteLine($"Перевод удалён");
+                        break;
                     }
                 }
-
-
+                File.WriteAllLines(_way, readText);
             }
-            else
+            else if (Tcheck == false && numbert == false)
             {
-                Console.WriteLine($"Нет такого слова");
+                Console.WriteLine($"Слово или его перевод не найдены в библиотеке");
+            }
+
+        }
+        private void IsTheTextEntered(string word, string text)
+        {
+            while (true)
+            {
+                Console.WriteLine($"Введите {text}");
+                if (word == "" || word == " ")
+                {
+                    Console.WriteLine($"вы нечего не ввели");
+                    Console.WriteLine();
+                }
+                else
+                {
+                    break;
+                }
             }
         }
     }
