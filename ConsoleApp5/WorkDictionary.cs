@@ -50,9 +50,9 @@ namespace ConsoleApp5
         public void InitialFunction()
         {
             bool checkw = false;
-            Console.WriteLine($"Введите слово");
+            Console.WriteLine($"Введите слово наличие которого хотите проверь в словаре");
             string word = Console.ReadLine();
-            IsTheTextEntered(word, "плово");
+            IsTheTextEntered(word, "Слово");
             using (StreamReader reader = new(_way))
             {
                 string? line;
@@ -69,7 +69,7 @@ namespace ConsoleApp5
             }
             if (checkw != true)
             {
-                Console.WriteLine($"Такого слова нет введите перевод");
+                Console.WriteLine($"Введите перевод слова");
                 string translation = Console.ReadLine();
                 IsTheTextEntered(translation, "перевод");
                 while (true)
@@ -275,13 +275,18 @@ namespace ConsoleApp5
         }
         private void IsTheTextEntered(string word, string text)
         {
+            int number= 1;
             while (true)
             {
-                Console.WriteLine($"Введите {text}");
+                if (number > 1)
+                {
+                    Console.WriteLine($"Введите {text}");
+                }
                 if (word == "" || word == " ")
                 {
                     Console.WriteLine($"вы нечего не ввели");
                     Console.WriteLine();
+                    number++;
                 }
                 else
                 {
