@@ -10,12 +10,12 @@ void Menu()
     Console.WriteLine($"4) Удалить слово и его перевод(ы)");
     Console.WriteLine($"5) Заменить перевод конкретного слова");
     Console.WriteLine($"6) Удалить конкретный перевод");
+    Console.WriteLine($"7) Проверка наличия слова");
     Console.WriteLine();
 }
 void UseMenu()
 {
     dictionary.SetWay();
-    dictionary.InitialFunction();
     while (true)
     {
         Menu();
@@ -51,6 +51,10 @@ void UseMenu()
         {
             dictionary.DeleteATranslation();
             continue;
+        }
+        else if (chec == 7)
+        {
+            dictionary.InitialFunction();
         }
         else
         {

@@ -32,6 +32,7 @@ namespace ConsoleApp5
                             using (finfo.Create()) ;
                             checkWay = true;
                             Console.WriteLine($"Файл с названием Dictionery создан");
+                            Console.WriteLine();
                             break;
                         }
                         catch
@@ -43,6 +44,7 @@ namespace ConsoleApp5
                     else
                     {
                         Console.WriteLine($"Файл Dictionery уже существует по указанному адресу поэтому чтение и запись будет производиться из него");
+                        Console.WriteLine();
                         checkWay = true;
                         break;
                     }
