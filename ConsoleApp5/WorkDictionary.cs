@@ -31,6 +31,7 @@ namespace ConsoleApp5
                         {
                             using (finfo.Create()) ;
                             checkWay = true;
+                            Console.WriteLine($"Файл с названием Dictionery создан");
                             break;
                         }
                         catch
@@ -41,6 +42,7 @@ namespace ConsoleApp5
                     }
                     else
                     {
+                        Console.WriteLine($"Файл Dictionery уже существует по указанному адресу поэтому чтение и запись будет производиться из него");
                         checkWay = true;
                         break;
                     }
@@ -52,7 +54,7 @@ namespace ConsoleApp5
             bool checkw = false;
             Console.WriteLine($"Введите слово наличие которого хотите проверь в словаре");
             string word = Console.ReadLine();
-            IsTheTextEntered(word, "Плов");
+            IsTheTextEntered(word, "Слово");
             using (StreamReader reader = new(_way))
             {
                 string? line;
@@ -69,32 +71,8 @@ namespace ConsoleApp5
             }
             if (checkw != true)
             {
-                Console.WriteLine($"Введите перевод слова");
-                string translation = Console.ReadLine();
-                IsTheTextEntered(translation, "перевод");
-                while (true)
-                {
-                    Console.WriteLine($"Хотите ли вы записать в словарь это слово и его перевод (введите да или нет)");
-                    string enter = Console.ReadLine();
-                    if (enter == "да" || enter == "Да")
-                    {
-                        using (StreamWriter writer = new StreamWriter(_way, true))
-                            writer.WriteLineAsync($"{word} - {translation} .");
-                        Console.WriteLine($"Запись произошла успешно");
-                        Console.WriteLine();
-                        break;
-                    }
-                    else if (enter == "нет" || enter == "Нет")
-                    {
-                        Console.WriteLine();
-                        break;
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Вы ввели некоректый ответ");
-                        Console.WriteLine();
-                    }
-                }
+                Console.WriteLine($"Такого слова нет в словаре");
+                Console.WriteLine();
             }
         }
         public void Add()
@@ -104,31 +82,33 @@ namespace ConsoleApp5
             Console.WriteLine($"Введите слово которое хотите добавть");
             word = Console.ReadLine();
             IsTheTextEntered(word, "слово");
-            Console.WriteLine($"Введите превод которое хотите добавть");
+            Console.WriteLine($"Введите превод который хотите добавть");
             translation = Console.ReadLine();
             IsTheTextEntered(translation, "перевод");
             using (StreamWriter writer = new(_way, true))
             {
                 writer.WriteLineAsync($"{word} - {translation} .");
+                Console.WriteLine($"В словарь добавленны слово и его перевод");
             }
         }
-        public async void GetDictionary()
+        public void GetDictionary()
         {
             using (StreamReader reader = new StreamReader(_way))
             {
-                string text = await reader.ReadToEndAsync();
+                string text = reader.ReadToEnd();
                 Console.WriteLine(text);
             }
         }
-        public async void CheckValue()
+        public void CheckValue()
         {
             Console.WriteLine($"Введите перевод который хотите проверить");
             string value = Console.ReadLine();
+            IsTheTextEntered(value,"перевод");
             bool Tverification = false;
             using (StreamReader reader = new(_way))
             {
                 string? line;
-                while ((line = await reader.ReadLineAsync()) != null)
+                while ((line =  reader.ReadLine()) != null)
                 {
                     var split = line.Split(',', '-', ' ');
                     for (int i = 1; i < split.Length; i++)
@@ -147,33 +127,31 @@ namespace ConsoleApp5
                 }
             }
         }
-        public async void Remove()
+        public void Remove()
         {
             Console.WriteLine($"Введите слово которое хотите удалить");
             string enter = Console.ReadLine();
             File.WriteAllLines(_way, File.ReadAllLines(_way).Where(v => v.Trim().IndexOf(enter) == -1).ToArray());
+            Console.WriteLine($"Слово и его перевод(ы) удалены");
         }
-        public async void Replacement()
+        public void Replacement()
         {
-            string onwhich = "";
+            string onwhich;
             bool Kcheck = false;
             Console.WriteLine($"Слово перевод которого хотите изменить");
             string key = Console.ReadLine();
             Console.WriteLine($"Какой перевод вы хотите заменить");
-            string which = Console.ReadLine();
-            while (true)
-            {
-                Console.WriteLine($"На какой перевод вы хотите заменть");
-                onwhich = Console.ReadLine();
-                IsTheTextEntered(onwhich, "перевод на который вы хотите заменить");
-            }
+            string which = Console.ReadLine();                        
+            Console.WriteLine($"На какой перевод вы хотите заменть");
+            onwhich = Console.ReadLine();
+            IsTheTextEntered(onwhich, "перевод на который вы хотите заменить");            
             string str = string.Empty;
             string read = "";
             using (StreamReader reader = new(_way))
             {
 
                 string? line;
-                while ((line = await reader.ReadLineAsync()) != null)
+                while ((line = reader.ReadLine()) != null)
                 {
                     var split = line.Split('-', ',', ' ');
                     if (split[0] == key)
@@ -208,10 +186,13 @@ namespace ConsoleApp5
                 }
                 File.WriteAllLines(_way, readText);
             }
+            else
+            {
+                Console.WriteLine($"Перевод не найден в библиотеке");
+            }
         }
-        public async void DeleteATranslation()
+        public void DeleteATranslation()
         {
-
             string read = "";
             string str = "";
             bool Tcheck = false;
@@ -223,7 +204,7 @@ namespace ConsoleApp5
             using (StreamReader reader = new(_way))
             {
                 string? line;
-                while ((line = await reader.ReadLineAsync()) != null)
+                while ((line = reader.ReadLine()) != null)
                 {
                     var split = line.Split('-', ',', ' ', '.');
                     if (split[0] == enter)
