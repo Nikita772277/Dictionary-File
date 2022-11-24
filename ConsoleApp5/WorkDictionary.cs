@@ -52,7 +52,7 @@ namespace ConsoleApp5
             bool checkw = false;
             Console.WriteLine($"Введите слово наличие которого хотите проверь в словаре");
             string word = Console.ReadLine();
-            IsTheTextEntered(word, "Слово");
+            IsTheTextEntered(word, "Плов");
             using (StreamReader reader = new(_way))
             {
                 string? line;
