@@ -56,7 +56,6 @@ namespace ConsoleApp5
             bool checkw = false;
             Console.WriteLine($"Введите слово наличие которого хотите проверь в словаре");
             string word = Console.ReadLine();
-            IsTheTextEntered(word, "Слово");
             using (StreamReader reader = new(_way))
             {
                 string? line;
@@ -83,10 +82,10 @@ namespace ConsoleApp5
             string translation;
             Console.WriteLine($"Введите слово которое хотите добавть");
             word = Console.ReadLine();
-            IsTheTextEntered(word, "слово");
+            IsTheTextEntered(word);
             Console.WriteLine($"Введите превод который хотите добавть");
             translation = Console.ReadLine();
-            IsTheTextEntered(translation, "перевод");
+            IsTheTextEntered(translation);
             using (StreamWriter writer = new(_way, true))
             {
                 writer.WriteLineAsync($"{word} - {translation} .");
@@ -95,22 +94,26 @@ namespace ConsoleApp5
         }
         public void GetDictionary()
         {
-            string str = string.Empty;
-            if (str != string.Empty)
+            FileInfo fileInfo = new(_way);
+            if(new FileInfo(_way).Length == 0) 
+            {
+                Console.WriteLine($"Библиотека Пуста");
+                Console.WriteLine();
+            }
+            else
             {
                 using (StreamReader reader = new StreamReader(_way))
                 {
-                string text = reader.ReadToEnd();
-                Console.WriteLine(text);
-                }                       
+                    string text = reader.ReadToEnd();
+                    Console.WriteLine(text);
+                }
             }
-            else { Console.WriteLine($"Библиотека Пуста"); }
         }
         public void CheckValue()
         {
             Console.WriteLine($"Введите перевод который хотите проверить");
             string value = Console.ReadLine();
-            IsTheTextEntered(value,"перевод");
+            IsTheTextEntered(value);
             bool Tverification = false;
             using (StreamReader reader = new(_way))
             {
@@ -151,7 +154,7 @@ namespace ConsoleApp5
             string which = Console.ReadLine();                        
             Console.WriteLine($"На какой перевод вы хотите заменть");
             onwhich = Console.ReadLine();
-            IsTheTextEntered(onwhich, "перевод на который вы хотите заменить");            
+            IsTheTextEntered(onwhich);            
             string str = string.Empty;
             string read = "";
             using (StreamReader reader = new(_way))
@@ -233,8 +236,20 @@ namespace ConsoleApp5
                         }
                         else
                         {
-                            Console.WriteLine("Перевод всего один удаление невозможно");
-                            numbert = true;
+                            for (int i = 1; i < split.Length; i++) {
+                                if (word == split[i]&&word!="")
+                                {
+                                    Console.WriteLine("Перевод всего один удаление невозможно");
+                                    numbert = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"Нет такого перевода");
+                                    numbert = true;
+                                    break;
+                                }
+                            }
                             break;
                         }
                     }
@@ -261,25 +276,12 @@ namespace ConsoleApp5
             }
 
         }
-        private void IsTheTextEntered(string word, string text)
+        private void IsTheTextEntered(string word)
         {
-            int number= 1;
-            while (true)
+            if (string.IsNullOrEmpty(word))
             {
-                if (number > 1)
-                {
-                    Console.WriteLine($"Введите {text}");
-                }
-                if (word == "" || word == " ")
-                {
-                    Console.WriteLine($"вы нечего не ввели");
-                    Console.WriteLine();
-                    number++;
-                }
-                else
-                {
-                    break;
-                }
+                Console.WriteLine($"Недопустимое значение");
+                return;
             }
         }
     }
