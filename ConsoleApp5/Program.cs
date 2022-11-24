@@ -25,36 +25,37 @@ void UseMenu()
         if (chec == 1)
         {
             dictionary.Add();
-            continue;
+            return; 
         }
         else if (chec == 2)
         {
             dictionary.GetDictionary();
-            continue;
+            return; 
         }
         else if (chec == 3)
         {
             dictionary.CheckValue();
-            continue;
+            return;
         }
         else if (chec == 4)
         {
             dictionary.Remove();
-            continue;
+            return;
         }
         else if (chec == 5)
         {
             dictionary.Replacement();
-            continue;
+            return;
         }
         else if (chec == 6)
         {
             dictionary.DeleteATranslation();
-            continue;
+            return;
         }
         else if (chec == 7)
         {
             dictionary.InitialFunction();
+            return;
         }
         else
         {

@@ -95,7 +95,7 @@ namespace ConsoleApp5
         public void GetDictionary()
         {
             FileInfo fileInfo = new(_way);
-            if(new FileInfo(_way).Length == 0) 
+            if (new FileInfo(_way).Length == 0)
             {
                 Console.WriteLine($"Библиотека Пуста");
                 Console.WriteLine();
@@ -118,7 +118,7 @@ namespace ConsoleApp5
             using (StreamReader reader = new(_way))
             {
                 string? line;
-                while ((line =  reader.ReadLine()) != null)
+                while ((line = reader.ReadLine()) != null)
                 {
                     var split = line.Split(',', '-', ' ');
                     for (int i = 1; i < split.Length; i++)
@@ -151,10 +151,10 @@ namespace ConsoleApp5
             Console.WriteLine($"Слово перевод которого хотите изменить");
             string key = Console.ReadLine();
             Console.WriteLine($"Какой перевод вы хотите заменить");
-            string which = Console.ReadLine();                        
+            string which = Console.ReadLine();
             Console.WriteLine($"На какой перевод вы хотите заменть");
             onwhich = Console.ReadLine();
-            IsTheTextEntered(onwhich);            
+            IsTheTextEntered(onwhich);
             string str = string.Empty;
             string read = "";
             using (StreamReader reader = new(_way))
@@ -236,8 +236,9 @@ namespace ConsoleApp5
                         }
                         else
                         {
-                            for (int i = 1; i < split.Length; i++) {
-                                if (word == split[i]&&word!="")
+                            for (int i = 1; i < split.Length; i++)
+                            {
+                                if (word == split[i] && word != "")
                                 {
                                     Console.WriteLine("Перевод всего один удаление невозможно");
                                     numbert = true;
