@@ -95,11 +95,16 @@ namespace ConsoleApp5
         }
         public void GetDictionary()
         {
-            using (StreamReader reader = new StreamReader(_way))
+            string str = string.Empty;
+            if (str != string.Empty)
             {
+                using (StreamReader reader = new StreamReader(_way))
+                {
                 string text = reader.ReadToEnd();
                 Console.WriteLine(text);
+                }                       
             }
+            else { Console.WriteLine($"Библиотека Пуста"); }
         }
         public void CheckValue()
         {
